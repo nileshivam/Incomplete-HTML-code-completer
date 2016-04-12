@@ -1,5 +1,9 @@
 <?php
-    $str="<bmhjj> <b></b>";
+
+    include 'Stack.php';
+
+    $str="<bmhjj><b></b>";
+
     $b=false;
     $n=strlen($str);
 
@@ -15,8 +19,7 @@
         }
     }
     $n=strlen($str);
-    echo htmlspecialchars($str);
-    $stack = new SplStack();
+    $stackobj = new Stack();
 
     for($i=0;$i<$n;$i++)
     {
@@ -28,49 +31,31 @@
                 $b = true;
                 $i++;
             }
+
             $tmp = null;
+
             while ($str[$i + 1] != '>')
             {
                 $tmp.=$str[$i+1];
                 $i++;
             }
-            $k = explode(" ", $tmp);
-            $tmp=$k[0];
-            echo "TMP: ".$tmp."<br />";
+
+            $tmp = explode(" ", $tmp)[0];
             if (!$b)
-            {
-                $stack->push($tmp);
-                echo "ADDED::".$tmp."<br />";
-            }
+                $stackobj->push($tmp);
             else
-            {
-                if($stack->count()!=0)
-                    $ret=$stack->pop();
-                else
+                if(!$stackobj->match_pop($tmp))
                 {
-                    echo "This is not done<br />";
-                    break;
+                    echo "There is some bad code!! fix it first<br />";
+                    exit;
                 }
-                if($ret==$tmp)
-                {
-                    echo "DONE!!!!".$tmp."<br />";
-                }
-                else
-                {
-                    echo "NOT SAME!!";
-                }
-            }
+
         }
     }
-    echo "Left elements::<br />";
-    while($stack->count()!=0)
+    while($stackobj->check())
     {
-        $ret=$stack->pop();
-        echo $ret."<br />";
-        $a="</".$ret.">";
-        $str.=$a;
+        $str.=$stackobj->make_pop();
     }
-    echo "<br /><br />This is final:::<br /><br />";
     echo htmlspecialchars($str);
 
 ?>
